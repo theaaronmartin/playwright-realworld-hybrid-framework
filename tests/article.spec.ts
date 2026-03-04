@@ -4,51 +4,50 @@ test.describe("Article Management", () => {
 	let authToken: string;
 	let articleSlug: string = "";
 
-	test.afterEach(async ({ articleHelper }) => {
-		if (articleSlug && authToken) {
-			console.log(`Cleaning up article via API: ${articleSlug}`);
-			await articleHelper.deleteArticle(articleSlug, authToken);
+	test.afterEach(async ({ page, articleHelper }) => {
+		if (articleSlug) {
+			const token = await page.evaluate(() =>
+				window.localStorage.getItem("jwtToken"),
+			);
+			if (token) {
+				console.log(`Cleaning up article via API: ${articleSlug}`);
+				await articleHelper.deleteArticle(articleSlug, token);
+			}
 		}
 	});
 
-	test("Critical Path: User can create and delete an article entirely via the UI", async ({
-		page,
-		loginPage,
-		articlePage,
-	}) => {
-		const email = process.env.TEST_USER_EMAIL!;
-		const password = process.env.TEST_USER_PASSWORD!;
-		const uniqueTitle = `UI End-to-End ${Date.now()}`;
+	test(
+		"Critical Path: User can create and delete an article entirely via the UI",
+		{ tag: "@create-ui" },
+		async ({ page, homePage, articlePage }) => {
+			const uniqueTitle = `UI End-to-End ${Date.now()}`;
 
-		await loginPage.goto();
-		await loginPage.login(email, password);
-		await expect(page.getByRole("link", { name: "New Article" })).toBeVisible();
+			await homePage.goto();
+			await expect(
+				page.getByRole("link", { name: "New Article" }),
+			).toBeVisible();
 
-		await articlePage.gotoEditor();
-		await articlePage.createArticle(
-			uniqueTitle,
-			"Full UI Test",
-			"This was created and will be deleted using only the UI.",
-			"e2e",
-		);
+			await articlePage.gotoEditor();
+			await articlePage.createArticle(
+				uniqueTitle,
+				"Full UI Test",
+				"This was created and will be deleted using only the UI.",
+				"e2e",
+			);
 
-		const articleHeader = page.getByRole("heading", { name: uniqueTitle });
-		await expect(articleHeader).toBeVisible();
+			const articleHeader = page.getByRole("heading", { name: uniqueTitle });
+			await expect(articleHeader).toBeVisible();
 
-		await articlePage.deleteArticle();
-		await expect(page).toHaveURL("https://demo.realworld.show/");
-	});
+			await articlePage.deleteArticle();
+			await expect(page).toHaveURL("https://demo.realworld.show/");
+		},
+	);
 
 	test(
 		"Hybrid Path: User can create an article (API Auth + API Teardown)",
 		{ tag: "@hybrid" },
-		async ({ page, authHelper, articlePage }) => {
-			const email = process.env.TEST_USER_EMAIL!;
-			const password = process.env.TEST_USER_PASSWORD!;
+		async ({ page, articlePage }) => {
 			const uniqueTitle = `Hybrid Approach ${Date.now()}`;
-
-			authToken = await authHelper.loginAndGetToken(email, password);
-			await authHelper.injectToken(page, authToken);
 
 			await articlePage.gotoEditor();
 			await expect(articlePage.publishButton).toBeVisible({ timeout: 15000 });

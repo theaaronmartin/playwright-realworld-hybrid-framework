@@ -8,6 +8,7 @@ export class ArticlePage {
 	readonly tagsInput: Locator;
 	readonly publishButton: Locator;
 	readonly deleteArticleButton: Locator;
+	readonly errorMessages: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
@@ -19,6 +20,7 @@ export class ArticlePage {
 		this.deleteArticleButton = page
 			.getByRole("button", { name: "Delete Article" })
 			.first();
+		this.errorMessages = page.locator(".error-messages li");
 	}
 
 	async gotoEditor() {

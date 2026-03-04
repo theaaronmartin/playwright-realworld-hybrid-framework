@@ -22,7 +22,7 @@ This framework was deliberately designed to showcase modern SDET best practices,
 
 ## 📂 Project Structure
 
-(Start text code block)
+```plaintext
 ├── api/                  # API helpers for auth and test data management
 ├── fixtures/             # Custom Playwright fixtures for dependency injection
 ├── pages/                # Page Object Model classes (UI locators & actions)
@@ -30,7 +30,7 @@ This framework was deliberately designed to showcase modern SDET best practices,
 ├── .github/workflows/    # CI/CD pipeline configuration
 ├── playwright.config.ts  # Global Playwright runner configuration
 └── .env                  # (Local only) Secure credentials
-(End code block)
+```
 
 ## 🚀 Getting Started
 
@@ -47,10 +47,10 @@ npx playwright install --with-deps
 
 Create a `.env` file in the root directory and add your Conduit test credentials:
 
-(Start env code block)
+```env
 TEST_USER_EMAIL=your_test_email@example.com
 TEST_USER_PASSWORD=your_secure_password
-(End code block)
+```
 
 *(Note: You can register a free account manually at https://demo.realworld.show/)*
 

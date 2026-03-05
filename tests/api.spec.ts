@@ -1,7 +1,5 @@
 import { test, expect } from "../fixtures/test-base";
 
-test.use({ storageState: { cookies: [], origins: [] } });
-
 test.describe("API-Only Article Management", { tag: "@api" }, () => {
 	test("Backend Critical Path: Create and delete an article purely via API", async ({
 		authHelper,

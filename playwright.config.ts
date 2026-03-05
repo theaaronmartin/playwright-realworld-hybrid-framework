@@ -9,17 +9,13 @@ export default defineConfig({
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	workers: process.env.CI ? 1 : 1,
+	workers: 2,
 	reporter: "html",
 
 	use: {
 		baseURL: "https://demo.realworld.show",
 		trace: "on-first-retry",
 		screenshot: "only-on-failure",
-		extraHTTPHeaders: {
-			Accept: "application/json",
-			"Content-Type": "application/json",
-		},
 	},
 
 	projects: [
@@ -29,12 +25,23 @@ export default defineConfig({
 		},
 		{
 			name: "chromium",
+			dependencies: ["setup"],
+			testIgnore: /.*api\.spec\.ts/,
 			use: {
 				...devices["Desktop Chrome"],
 				storageState: "playwright/.auth/user.json",
 			},
-
-			dependencies: ["setup"],
+		},
+		{
+			name: "api",
+			testMatch: /.*api\.spec\.ts/,
+			use: {
+				storageState: { cookies: [], origins: [] },
+				extraHTTPHeaders: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+			},
 		},
 	],
 });

@@ -13,16 +13,10 @@ export class LoginPage {
 		this.signInButton = page.getByRole("button", { name: "Sign in" });
 	}
 
-	/**
-	 * Navigates directly to the login page.
-	 */
 	async goto() {
-		await this.page.goto("/login"); // Conduit uses hash routing
+		await this.page.goto("/login");
 	}
 
-	/**
-	 * Fills out the login form and submits it.
-	 */
 	async login(email: string, password: string) {
 		await this.emailInput.fill(email);
 		await this.passwordInput.fill(password);

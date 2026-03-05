@@ -7,15 +7,43 @@ export class ArticleHelper {
 		this.request = request;
 	}
 
-	/**
-	 * Deletes an article using the backend API.
-	 */
+	async createArticle(
+		title: string,
+		description: string,
+		body: string,
+		tagList: string[],
+		token: string,
+	) {
+		const response = await this.request.post(
+			"https://api.realworld.show/api/articles",
+			{
+				headers: {
+					Authorization: `Token ${token}`,
+				},
+				data: {
+					article: {
+						title: title,
+						description: description,
+						body: body,
+						tagList: tagList,
+					},
+				},
+			},
+		);
+
+		expect(
+			response.ok(),
+			`API should successfully create the article. Status: ${response.status()}`,
+		).toBeTruthy();
+		return await response.json();
+	}
+
 	async deleteArticle(slug: string, token: string) {
 		const response = await this.request.delete(
 			`https://api.realworld.show/api/articles/${slug}`,
 			{
 				headers: {
-					Authorization: `Token ${token}`, // The API requires the token to prove you own the article
+					Authorization: `Token ${token}`,
 				},
 			},
 		);

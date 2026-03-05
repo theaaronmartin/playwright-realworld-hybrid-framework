@@ -5,6 +5,20 @@ test.describe("Advanced Network Mocking", { tag: "@mocking" }, () => {
 		page,
 		articlePage,
 	}) => {
+		await page.route("**/api/user", async (route) => {
+			await route.fulfill({
+				status: 200,
+				contentType: "application/json",
+				body: JSON.stringify({
+					user: {
+						email: "mock@test.com",
+						username: "puppetmaster",
+						token: "fake-token",
+					},
+				}),
+			});
+		});
+
 		await page.route(/\/api\/articles/, async (route) => {
 			if (route.request().method() === "POST") {
 				console.log("Intercepted POST to /api/articles. Forcing a 500 Error!");
